@@ -11,7 +11,7 @@ public class ProceduralAnimation : MonoBehaviour
     [SerializeField] PlayerController playerController;
     
     Vector3 oldPosition, currentPosition, newPosition;
-    Vector3 oldNormal, currentNormal, newNormal;
+    
 
     float lerp;
 
@@ -19,7 +19,7 @@ public class ProceduralAnimation : MonoBehaviour
     {
         
         currentPosition = newPosition = oldPosition = transform.position;
-        currentNormal = newNormal = oldNormal = transform.up;
+       
         lerp = 1;
     }
 
@@ -28,18 +28,18 @@ public class ProceduralAnimation : MonoBehaviour
     void FixedUpdate()
     {
         transform.position = currentPosition;
-        transform.up = currentNormal;
+        
 
         Ray ray = new Ray(hint.position, Vector3.down);
-
+        // Physics.SphereCast(transform.position, playerController.stepDistance, Vector3.down, out )
         if (Physics.Raycast(ray, out RaycastHit info, 50, terrainLayer.value))
         {
             Debug.DrawLine(hint.position, info.point, Color.red);
-            if (Vector3.Distance(newPosition, info.point) > playerController.stepDistance && !otherFoot_0.IsMoving() && !otherFoot_1.IsMoving() && lerp >= 1)
+            if (Vector3.Distance(newPosition, info.point) - 0.3f > playerController.stepDistance && !otherFoot_0.IsMoving() && !otherFoot_1.IsMoving() && lerp >= 1)
             {
                 lerp = 0;
                 newPosition = info.point + playerController.footOffset;
-                newNormal = info.normal;
+               
             }
         }
 
@@ -49,13 +49,13 @@ public class ProceduralAnimation : MonoBehaviour
             tempPosition.y += Mathf.Sin(lerp * Mathf.PI) * playerController.stepHeight;
 
             currentPosition = tempPosition;
-            currentNormal = Vector3.Lerp(oldNormal, newNormal, lerp);
+            
             lerp += Time.deltaTime * playerController.legSpeed;
         }
         else
         {
             oldPosition = newPosition;
-            oldNormal = newNormal;
+            
         }
     }
 

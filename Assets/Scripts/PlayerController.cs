@@ -12,9 +12,10 @@ public class PlayerController : MonoBehaviour
     private enum BodyType
     {
         Dynamic,
-        Kinematic
+        Kinematic,
+        AIControlled
     }
-    BodyType type;
+    [SerializeField] BodyType type;
 
     public float legSpeed = 1;
     public float stepDistance = 3;
@@ -22,18 +23,13 @@ public class PlayerController : MonoBehaviour
     public float stepHeight = 1;
     public Vector3 footOffset = default;
 
+    Vector3 Vec;
+
     // Start is called before the first frame update
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        if(_rigidbody.isKinematic)
-        {
-            type = BodyType.Kinematic;
-        }
-        else
-        {
-            type = BodyType.Dynamic;
-        }
+        
     }
 
     // Update is called once per frame
@@ -56,9 +52,13 @@ public class PlayerController : MonoBehaviour
                     _rigidbody.AddForce(value * Time.fixedDeltaTime * 1000f, 0f, 0f);
             }
         }
-        else
+        else if(type == BodyType.Kinematic)
         {
-            // transform.Translate(transform.position + new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * _speed * Time.deltaTime * multiplier);
+            Vec = transform.localPosition;
+            // Vec.y += Input.GetAxis("Jump") * Time.deltaTime * 20;
+            Vec.x += Input.GetAxis("Horizontal") * Time.deltaTime * _speed;
+            Vec.z += Input.GetAxis("Vertical") * Time.deltaTime * _speed;
+            transform.localPosition = Vec;
         }
         
     }
